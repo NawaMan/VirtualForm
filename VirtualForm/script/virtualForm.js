@@ -89,6 +89,26 @@ var virtualForm = (function($) {
 		}
 		$target = $($target);
 		option_map = option_map || {};
+		var widgetVar;
+		
+		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
+		if ($target.is("[data-submit-on]")) {
+			autoSubmits.push($target);
+		}
+		for (var i = 0; i < autoSubmits.length; i++) {
+			var $autoSubmit = $(autoSubmits[i]);
+			var submitOns = $autoSubmit.attr("data-submit-on");
+			if (submitOns) {
+				submitOns = submitOns.split(/[ \t\r\n]*,[ \t\r\n]*/);
+				for (var s = 0; s < submitOns.length; s++) {
+					var submitOn = submitOns[s];
+					$autoSubmit.unbind(submitOn);
+					$autoSubmit.bind(submitOn, function callSubmit() {
+						widgetVar.submit();
+					});
+				}
+			}
+		}
 		
 		$target.bind('callSubmit', function () {
 			var $This = $(this);
@@ -100,12 +120,13 @@ var virtualForm = (function($) {
 			$target.trigger(event);
 		});
 		
-		var widgetVar = {
+		widgetVar = {
 			'submit': function() {
 				var args = Array.prototype.slice.call( arguments, 0 );
 				$target.trigger('callSubmit', args);
 			}
 		};
+		
 		
 		if (($target.attr("data-var") != undefined)
 		 || (("declareWidgetVar" in option_map) && (option_map.declareWidgetVar))) {

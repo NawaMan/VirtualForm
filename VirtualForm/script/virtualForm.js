@@ -42,11 +42,22 @@ var virtualForm = (function($) {
 		return { 'fields': fields, 'values': values };
 	}
 	
-	makeForm = function ($target) {
+	function declareWidgetVariable($target, widgetVar) {
+		var varName = $target.attr('data-var');
+		if (!varName) {
+			varName = $target.attr('id');
+		}
+		if (varName) {
+			window[varName] = widgetVar;
+		}
+	}
+	
+	makeForm = function ($target, option_map) {
 		if (!$target) {
 			return;
 		}
 		$target = $($target);
+		option_map = option_map || {};
 		
 		$target.bind('callSubmit', function () {
 			var $This = $(this);
@@ -58,12 +69,19 @@ var virtualForm = (function($) {
 			$target.trigger(event);
 		});
 		
-		return {
+		var widgetVar = {
 			'submit': function() {
 				var args = Array.prototype.slice.call( arguments, 0 );
 				$target.trigger('callSubmit', args);
 			}
 		};
+		
+		if (($target.attr("data-var") != "")
+		 || (("declare_var" in option_map) && (option_map.declare_var))) {
+			declareWidgetVariable($target, widgetVar);
+		}
+		
+		return widgetVar;
 	};
 	
 	return {

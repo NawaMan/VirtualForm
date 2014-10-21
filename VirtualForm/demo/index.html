@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <title>VirtualForm demo</title>
 <style>
-.fragment > * {
+.vform1 > * {
     display: block;
 }
-.fragment {
+.vform1 {
     float: left;
 }
 .log {
@@ -38,18 +38,31 @@
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="../script/virtualForm.js"></script>
 <script>
-function log(text) {
-    $(".log")
-       .append(
-           $("<div />")
-               .append($("<div />").text(new Date()))
-               .append($("<div />").text(text)));
+function log() {
+    var $div = $("<div />");
+    $div.append($("<div />").text(new Date()));
+    for (var i = 0; i < arguments.length; i++) {
+        var arg = arguments[i];
+        var text = "";
+        if (((typeof arg) === 'string')
+         || ((typeof arg) === 'number')) {
+            text = "" + arg;
+        } else {
+            text = JSON.stringify(arg, undefined, 2)
+        }
+        $div.append($("<div />").text(text))
+    }
+    $(".log").append($div);
 }
 
 $(function () {
     virtualForm.initModule();
     
-    virtualForm.makeForm($(".fragment"));
+    var vform1 = virtualForm.makeForm($(".vform1"));
+    
+    $(".vform1 #SUBMIT").click(function () {
+        vform1.submit();
+    });
     
     log("Start ...");
 });
@@ -57,17 +70,17 @@ $(function () {
 </head>
 <body>
 
-<div class="fragment" >
+<div class="vform1" onSubmit="var event = arguments[0]; log(event.values);">
     <input type="text"           name="text" value="text"/>
     <input type="hidden"         name="hidden"    value="hidden" />
-    <span><input type="checkbox"       name="checkbox1" checked="checked" /> checkbox1</span>
-    <span><input type="checkbox"       name="checkbox2" /> checkbox2</span>
-    <span><input type="radio"          name="radio1" value="r1-choice1" /> r1-choice1</span>
-    <span><input type="radio"          name="radio1" value="r1-choice2" /> r1-choice2</span>
-    <span><input type="radio"          name="radio1" value="r1-choice3" /> r1-choice3</span>
-    <span><input type="radio"          name="radio2" value="r2-choice1" /> r2-choice1</span>
-    <span><input type="radio"          name="radio2" value="r2-choice2" /> r2-choice2</span>
-    <span><input type="radio"          name="radio2" value="r2-choice3" /> r2-choice3</span>
+    <span><input type="checkbox" name="checkbox1" checked="checked" /> checkbox1</span>
+    <span><input type="checkbox" name="checkbox2" /> checkbox2</span>
+    <span><input type="radio"    name="radio1" value="r1-choice1" /> r1-choice1</span>
+    <span><input type="radio"    name="radio1" value="r1-choice2" /> r1-choice2</span>
+    <span><input type="radio"    name="radio1" value="r1-choice3" /> r1-choice3</span>
+    <span><input type="radio"    name="radio2" value="r2-choice1" /> r2-choice1</span>
+    <span><input type="radio"    name="radio2" value="r2-choice2" /> r2-choice2</span>
+    <span><input type="radio"    name="radio2" value="r2-choice3" /> r2-choice3</span>
     <input type="file"           name="file" />
     <input type="password"       name="password" value="password" />
     <input type="search"         name="search"   value="search" />
@@ -92,7 +105,7 @@ $(function () {
     <textarea rows="10" cols="30" name="textarea">
        Text area
     </textarea>
-    <input type="button" id="OK" value="OK" />
+    <input type="button" id="SUBMIT" value="SUBMIT" />
     <input type="button" value="CANCEL" />
 </div>
 <div class="log" >

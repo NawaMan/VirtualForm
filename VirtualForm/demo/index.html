@@ -61,7 +61,12 @@ $(function () {
     var vform1 = virtualForm.makeForm($(".vform1"));
     
     $(".vform1 #SUBMIT").click(function () {
+        // Submit via variable.
         vform1.submit("arg1", "arg2");
+    });
+    $(".vform1 #CALLSUBMIT").click(function () {
+        // Submit via event
+        $(this).trigger('callSubmit', ["arg1", "arg2"]);
     });
     
     log("Start ...");
@@ -105,8 +110,10 @@ $(function () {
     <textarea rows="10" cols="30" name="textarea">
        Text area
     </textarea>
-    <input type="button" id="SUBMIT" value="SUBMIT" />
-    <input type="button" value="CANCEL" />
+    <span>
+        <input type="button" id="SUBMIT" value="SUBMIT" />
+        <input type="button" id="CALLSUBMIT" value="CALL SUBMIT" />
+    </span>
 </div>
 <div class="log" >
 </div>

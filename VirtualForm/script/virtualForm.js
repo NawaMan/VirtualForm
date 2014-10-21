@@ -12,33 +12,64 @@ var virtualForm = (function($) {
 		
 	};
 	
+	function extractParameterName($element) {
+		var name = $element.attr("data-name");
+		if (!name) {
+			name = $element.attr("id");
+		}
+		if (!name) {
+			name = $element.attr("name");
+		}
+		return name;
+	}
+	
+	function extractParameterValue($element) {
+		var  value = null;
+		if ($element.is("input[type=checkbox]")) {
+			value = ($element.attr('checked') == 'checked');
+		} else {
+			value = $element.val();
+		}
+		return value;
+	}
+	
 	function extractParameters($target) {
 		var fields = {};
 		var values = {};
-		$target.find("input,select,textarea").each(function() {
-			var $This = $(this);
-			if ($This.is("input[type=button]")) {
-				return;
-			}
-			var name = $This.attr("data-name");
-			if (!name) {
-				name = $This.attr("id");
-			}
-			if (!name) {
-				name = $This.attr("name");
-			}
-			var value;
-			if ($This.is("input[type=checkbox]")) {
-				value = ($This.attr('checked') == 'checked');
-			} else {
-				value = $This.val();
-			}
+		
+		// Button value will only count when it is the form.
+		if ($target.is("input[type=button]")) {
+			var name = extractParameterName($target);
+			var value = $target.val();
 			values[name] = value;
 			fields[name] = {
 				'value': value,
-				'element': $This
+				'element': $target
 			};
-		});
+		} if ($target.is("input")) {
+			var name = extractParameterName($target);
+			var value = extractParameterValue($target);
+			values[name] = value;
+			fields[name] = {
+				'value': value,
+				'element': $target
+			};
+		} else {
+			$target.find("input,select,textarea").each(function() {
+				var $This = $(this);
+				if ($This.is("input[type=button]")) {
+					return;
+				}
+				
+				var name = extractParameterName($This);
+				var value = extractParameterValue($This);
+				values[name] = value;
+				fields[name] = {
+					'value': value,
+					'element': $This
+				};
+			});
+		}
 		return { 'fields': fields, 'values': values };
 	}
 	
@@ -76,8 +107,8 @@ var virtualForm = (function($) {
 			}
 		};
 		
-		if (($target.attr("data-var") != "")
-		 || (("declare_var" in option_map) && (option_map.declare_var))) {
+		if (($target.attr("data-var") != undefined)
+		 || (("declareWidgetVar" in option_map) && (option_map.declareWidgetVar))) {
 			declareWidgetVariable($target, widgetVar);
 		}
 		

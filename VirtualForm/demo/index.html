@@ -4,14 +4,13 @@
 <meta charset="UTF-8">
 <title>VirtualForm demo</title>
 <style>
-.vform1 > * {
+body > * {
+    float: left;
+}
+.vform > * {
     display: block;
 }
-.vform1 {
-    float: left;
-}
 .log {
-    float: left;
     white-space: pre;
     overflow: visible;
     width: 800px;
@@ -58,19 +57,37 @@ function log() {
 $(function () {
     virtualForm.initModule();
     
-    var vform1 = virtualForm.makeForm($(".vform1"));
+    var vform1 = virtualForm.makeForm($("#vform1"));
+    virtualForm.makeForm($("#vform2"), { declareWidgetVar: true });
+    virtualForm.makeForm($("#vform3"), { declareWidgetVar: true });
+    virtualForm.makeForm($("#vform4"), { declareWidgetVar: true });
     
-    $(".vform1 #SUBMIT").click(function () {
+    $("#vform1 #SUBMIT").click(function () {
         // Submit via variable.
         vform1.submit("Variable", "arg1", "arg2");
     });
-    $(".vform1 #CALLSUBMIT").click(function () {
+    $("#vform1 #CALLSUBMIT").click(function () {
         // Submit via event
         $(this).trigger('callSubmit', ["Event", "arg1", "arg2"]);
     });
-    $(".vform1 #VARSUBMIT").click(function () {
+    $("#vform1 #VARSUBMIT").click(function () {
         // Submit via widget var
         myVFrom.submit("WidgetVar", "arg1", "arg2");
+    });
+    
+    $("#vform2 #SUBMIT").click(function () {
+        // Submit via widget var by the id.
+        vform2.submit("Variable", "arg1", "arg2");
+    });
+    
+    $("#vform3").change(function () {
+        // Submit 'text-change' form.
+        vform3.submit("Variable", "arg1", "arg2");
+    });
+    
+    $("#vform4").click(function () {
+        // Submit 'button-click' form.
+        vform4.submit("Variable", "arg1", "arg2");
     });
     
     log("Start ...");
@@ -79,7 +96,8 @@ $(function () {
 </head>
 <body>
 
-<div class="vform1" data-var='myVFrom' onSubmit="var event = arguments[0]; log(event.args, event.values);">
+<div class="vform" id="vform1" data-var='myVFrom' onSubmit="var event = arguments[0]; log(event.args, event.values);">
+    <span>VForm1</span>
     <input type="text"           name="text" value="text"/>
     <input type="hidden"         name="hidden"    value="hidden" />
     <span><input type="checkbox" name="checkbox1" checked="checked" /> checkbox1</span>
@@ -120,6 +138,23 @@ $(function () {
         <input type="button" id="VARSUBMIT" value="VAR SUBMIT" />
     </span>
 </div>
+
+<div>
+    <div class="vform" id="vform2" onSubmit="var event = arguments[0]; log(event.args, event.values);">
+        <span>VForm2</span>
+        <input type="text" name="text" value="text"/>
+        <span>
+            <input type="button" id="SUBMIT" value="SUBMIT" />
+        </span>
+    </div>
+    <div>
+        <input type="text" id="vform3" name="text" value="Form3" onSubmit="var event = arguments[0]; log(event.args, event.values);"/>
+    </div>
+    <div>
+        <input type="button" id="vform4" value="SUBMIT" onSubmit="var event = arguments[0]; log(event.args, event.values);"/>
+    </div>
+</div>
+
 <div class="log" >
 </div>
 

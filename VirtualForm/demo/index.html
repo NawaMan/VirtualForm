@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+.fragment > * {
+    display: block;
+}
+.fragment {
+    float: left;
+}
+.log {
+    float: left;
+    white-space: pre;
+    overflow: visible;
+    width: 800px;
+}
+.log div {
+    margin-top: 0.2em;
+    padding: 0.2em;
+    font-size: 1.2em;
+    background-color: #EEEEEE;
+}
+.log div div {
+    border-bottom: none;
+    font-family: monospace;
+}
+.log div div:FIRST-CHILD {
+    font-size: x-small;
+    color: gray;
+    padding-bottom: 0.2em;
+}
+.log div div:LAST-CHILD {
+    padding-bottom: 0.1em;
+}
+</style>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="../script/virtualForm.js"></script>
+<script>
+function log(text) {
+    $(".log")
+       .append(
+           $("<div />")
+               .append($("<div />").text(new Date()))
+               .append($("<div />").text(text)));
+}
+
+$(function () {
+    virtualForm.initModule();
+    
+    virtualForm.makeForm($(".fragment"));
+    
+    log("Start ...");
+});
+</script>
+</head>
+<body>
+
+<div class="fragment" >
+    <input type="text"           name="text" value="text"/>
+    <input type="hidden"         name="hidden"    value="hidden" />
+    <span><input type="checkbox"       name="checkbox1" checked="checked" /> checkbox1</span>
+    <span><input type="checkbox"       name="checkbox2" /> checkbox2</span>
+    <span><input type="radio"          name="radio1" value="r1-choice1" /> r1-choice1</span>
+    <span><input type="radio"          name="radio1" value="r1-choice2" /> r1-choice2</span>
+    <span><input type="radio"          name="radio1" value="r1-choice3" /> r1-choice3</span>
+    <span><input type="radio"          name="radio2" value="r2-choice1" /> r2-choice1</span>
+    <span><input type="radio"          name="radio2" value="r2-choice2" /> r2-choice2</span>
+    <span><input type="radio"          name="radio2" value="r2-choice3" /> r2-choice3</span>
+    <input type="file"           name="file" />
+    <input type="password"       name="password" value="password" />
+    <input type="search"         name="search"   value="search" />
+    <input type="email"          name="email"    value="email@email.com" />
+    <input type="url"            name="url"      value="url.com"/>
+    <input type="tel"            name="tel"      value="1-800-555-6666"/>
+    <input type="number"         name="number1" min="5" max="18" step="0.5" value="9" />
+    <input type="text"           name="number2" pattern="[0-9]*" value="6" />
+    <input type="range"          name="range"   min="1" max="100" value="7" />
+    <input type="date"           name="date"    min="2012-01-01" max="2013-01-01" />
+    <input type="month"          name="month" />
+    <input type="week"           name="vacation" />
+    <input type="time"           name="time" />
+    <input type="datetime"       name="datetime" />
+    <input type="datetime-local" name="localDatetime" />
+    <input type="color"          name="color" />
+    <select name="select">
+        <option value="option1">Option1</option>
+        <option value="option2">Option2</option>
+        <option value="option3" selected="selected" >Option3</option>
+    </select>
+    <textarea rows="10" cols="30" name="textarea">
+       Text area
+    </textarea>
+    <input type="button" id="OK" value="OK" />
+    <input type="button" value="CANCEL" />
+</div>
+<div class="log" >
+</div>
+
+</body>
+</html>

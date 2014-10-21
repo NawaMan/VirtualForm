@@ -52,6 +52,7 @@ var virtualForm = (function($) {
 			var $This = $(this);
 			var result = extractParameters($This);
 			var event = $.Event("submit");
+			event.args = Array.prototype.slice.call( arguments, 1 );
 			event.values = result.values;
 			event.fields = result.fields;
 			$target.trigger(event);
@@ -59,7 +60,8 @@ var virtualForm = (function($) {
 		
 		return {
 			'submit': function() {
-				$target.trigger('callSubmit');
+				var args = Array.prototype.slice.call( arguments, 0 );
+				$target.trigger('callSubmit', args);
 			}
 		};
 	};

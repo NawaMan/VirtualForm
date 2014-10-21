@@ -61,7 +61,7 @@ $(function () {
     var vform1 = virtualForm.makeForm($(".vform1"));
     
     $(".vform1 #SUBMIT").click(function () {
-        vform1.submit();
+        vform1.submit("arg1", "arg2");
     });
     
     log("Start ...");
@@ -70,7 +70,7 @@ $(function () {
 </head>
 <body>
 
-<div class="vform1" onSubmit="var event = arguments[0]; log(event.values);">
+<div class="vform1" onSubmit="var event = arguments[0]; log(event.args, event.values);">
     <input type="text"           name="text" value="text"/>
     <input type="hidden"         name="hidden"    value="hidden" />
     <span><input type="checkbox" name="checkbox1" checked="checked" /> checkbox1</span>

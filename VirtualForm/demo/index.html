@@ -58,7 +58,7 @@ $(function () {
     virtualForm.initModule();
     
     var vform1 = virtualForm.makeForm($("#vform1"));
-    virtualForm.makeForm($("#vform2"), { _declareWidgetVar_: true, extra1 : 'one' });
+    virtualForm.makeForm($("#vform2"), { _declareWidgetVar_: true, extra1 : 'one' }, { count : 0 });
     virtualForm.makeForm($("#vform3"), { _declareWidgetVar_: true });
     virtualForm.makeForm($("#vform4"), { _declareWidgetVar_: true });
     
@@ -94,7 +94,8 @@ $(function () {
 });
 
 function onForm2Submit(event) {
-    log("Form2", event.args, event.values, event.config);
+    log("Form2", event.args, event.values, event.config, event.context);
+    event.context.count++;
 };
 </script>
 </head>

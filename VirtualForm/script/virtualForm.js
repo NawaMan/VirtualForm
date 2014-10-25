@@ -115,14 +115,16 @@ var virtualForm = (function($) {
 		}
 	}
 	
-	makeForm = function ($target, config_map) {
+	makeForm = function ($target, config_map, context_map) {
 		if (!$target) {
 			return;
 		}
 		$target = $($target);
 		config_map = config_map || {};
+		context_map = context_map || {};
 		
 		var config = duplicateObject(config_map);
+		var context = duplicateObject(context_map);
 		var widgetVar;
 		
 		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
@@ -148,10 +150,11 @@ var virtualForm = (function($) {
 			var $This = $(this);
 			var result = extractParameters($This);
 			trigEvent($This, 'submit', {
-				args   : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
-				config : config,
-				values : result.values,
-				fields : result.fields,
+				args    : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
+				config  : config,
+				values  : result.values,
+				fields  : result.fields,
+				context : context,
 			});
 		});
 		

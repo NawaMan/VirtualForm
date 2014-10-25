@@ -83,6 +83,14 @@ var virtualForm = (function($) {
 		}
 	}
 	
+	function duplicateObject(data) {
+		var newData = {};
+		$.each(data, function(prop, value) {
+			newData[prop] = data[prop];
+		});
+		return newData;
+	}
+	
 	function trigEvent($element, name, data) {
 		$element = $($element);
 		var onName = "on" + name;
@@ -107,12 +115,14 @@ var virtualForm = (function($) {
 		}
 	}
 	
-	makeForm = function ($target, option_map) {
+	makeForm = function ($target, config_map) {
 		if (!$target) {
 			return;
 		}
 		$target = $($target);
-		option_map = option_map || {};
+		config_map = config_map || {};
+		
+		var config = duplicateObject(config_map);
 		var widgetVar;
 		
 		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
@@ -139,6 +149,7 @@ var virtualForm = (function($) {
 			var result = extractParameters($This);
 			trigEvent($This, 'submit', {
 				args   : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
+				config : config,
 				values : result.values,
 				fields : result.fields,
 			});
@@ -152,7 +163,7 @@ var virtualForm = (function($) {
 		};
 		
 		if (($target.attr("data-var") != undefined)
-		 || (("declareWidgetVar" in option_map) && (option_map.declareWidgetVar))) {
+		 || (("_declareWidgetVar_" in config_map) && (config_map._declareWidgetVar_))) {
 			declareWidgetVariable($target, widgetVar);
 		}
 		

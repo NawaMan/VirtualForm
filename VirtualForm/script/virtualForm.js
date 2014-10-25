@@ -83,6 +83,30 @@ var virtualForm = (function($) {
 		}
 	}
 	
+	function trigEvent($element, name, data) {
+		$element = $($element);
+		var onName = "on" + name;
+		var event = $.Event(name);
+		$.each(data, function(prop, value) {
+			event[prop] = data[prop];
+		});
+		try {
+			var onSubmit = $element.attr(onName);
+			if (onSubmit != null) {
+				var submitFunct = function(event) {
+					eval(onSubmit);
+				};
+				submitFunct.call($element, event);
+				$element.attr(onName, '');
+			}
+			$element.trigger(event);
+		} finally {
+			if (onSubmit != null) {
+				$element.attr(onName, onSubmit);
+			}
+		}
+	}
+	
 	makeForm = function ($target, option_map) {
 		if (!$target) {
 			return;
@@ -113,11 +137,11 @@ var virtualForm = (function($) {
 		$target.bind('callSubmit', function () {
 			var $This = $(this);
 			var result = extractParameters($This);
-			var event = $.Event("submit");
-			event.args = Array.prototype.slice.call( arguments, 1 );
-			event.values = result.values;
-			event.fields = result.fields;
-			$target.trigger(event);
+			trigEvent($This, 'submit', {
+				args   : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
+				values : result.values,
+				fields : result.fields,
+			});
 		});
 		
 		widgetVar = {
@@ -126,7 +150,6 @@ var virtualForm = (function($) {
 				$target.trigger('callSubmit', args);
 			}
 		};
-		
 		
 		if (($target.attr("data-var") != undefined)
 		 || (("declareWidgetVar" in option_map) && (option_map.declareWidgetVar))) {

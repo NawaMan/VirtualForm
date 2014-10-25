@@ -51,7 +51,7 @@ function log() {
         }
         $div.append($("<div />").text(text))
     }
-    $(".log").append($div);
+    $(".log").prepend($div);
 }
 
 $(function () {
@@ -92,11 +92,15 @@ $(function () {
     
     log("Start ...");
 });
+
+function onForm2Submit(event) {
+    log("Form2", event.args, event.values);
+};
 </script>
 </head>
 <body>
 
-<div class="vform" id="vform1" data-var='myVFrom' onSubmit="var event = arguments[0]; log(event.args, event.values);">
+<div class="vform" id="vform1" data-var='myVFrom' onSubmit="log(event.args, event.values);">
     <span>VForm1</span>
     <input type="text"           name="text" value="text"/>
     <input type="hidden"         name="hidden"    value="hidden" />
@@ -143,7 +147,7 @@ $(function () {
 </div>
 
 <div>
-    <div class="vform" id="vform2" onSubmit="var event = arguments[0]; log(event.args, event.values);">
+    <div class="vform" id="vform2" onSubmit="onForm2Submit(event);">
         <span>VForm2</span>
         <input type="text" name="text" value="text"/>
         <span>
@@ -151,10 +155,10 @@ $(function () {
         </span>
     </div>
     <div>
-        <input type="text" id="vform3" name="text" value="Form3" onSubmit="var event = arguments[0]; log(event.args, event.values);"/>
+        <input type="text" id="vform3" name="text" value="Form3" onSubmit="log(event.args, event.values);"/>
     </div>
     <div>
-        <input type="button" id="vform4" value="SUBMIT" onSubmit="var event = arguments[0]; log(event.args, event.values);"/>
+        <input type="button" id="vform4" value="SUBMIT" onSubmit="log(event.args, event.values);"/>
     </div>
 </div>
 

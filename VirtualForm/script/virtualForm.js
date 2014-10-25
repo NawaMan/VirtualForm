@@ -128,6 +128,9 @@ var virtualForm = (function($) {
 		var uniqueId = '' + Math.floor(Math.random()*1000000);
 		var widgetVar;
 		
+		// TODO - Think about share context regardless of the source.
+		// TODO - Think about make 'specificOnly' a built-in config.
+		
 		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
 		if ($target.is("[data-submit-on]")) {
 			autoSubmits.push($target);

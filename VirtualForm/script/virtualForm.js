@@ -125,6 +125,7 @@ var virtualForm = (function($) {
 		
 		var config = duplicateObject(config_map);
 		var context = duplicateObject(context_map);
+		var uniqueId = '' + Math.floor(Math.random()*1000000);
 		var widgetVar;
 		
 		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
@@ -146,22 +147,34 @@ var virtualForm = (function($) {
 			}
 		}
 		
-		$target.bind('callSubmit', function () {
+		$target.bind('callSubmit', function (e) {
+			// Case of missing id, all instance will be triggered.
+			var isSpecific = false;
+			if ('___uniqueId___' in e) {
+				if (e.___uniqueId___ != uniqueId) {
+					return;
+				}
+				isSpecific = true;
+			}
+			
 			var $This = $(this);
 			var result = extractParameters($This);
 			trigEvent($This, 'submit', {
-				args    : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
-				config  : config,
-				values  : result.values,
-				fields  : result.fields,
-				context : context,
+				args       : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
+				config     : config,
+				values     : result.values,
+				fields     : result.fields,
+				context    : context,
+				isSpecific : isSpecific,
 			});
 		});
 		
 		widgetVar = {
 			'submit': function() {
 				var args = Array.prototype.slice.call( arguments, 0 );
-				$target.trigger('callSubmit', args);
+				var event = $.Event('callSubmit');
+				event.___uniqueId___ = uniqueId;
+				$target.trigger(event, args);
 			}
 		};
 		

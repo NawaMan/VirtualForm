@@ -62,6 +62,14 @@ $(function () {
     virtualForm.makeForm($("#vform3"), { _declareWidgetVar_: true });
     virtualForm.makeForm($("#vform4"), { _declareWidgetVar_: true });
     
+    var form2b = virtualForm.makeForm($("#vform2"), { specficOnly: true }, { count : 0 });
+    setTimeout(function() {
+        form2b.submit();
+        setTimeout(function() {
+            form2b.submit();
+        } , 2000);
+    } , 2000);
+    
     $("#vform1 #SUBMIT").click(function () {
         // Submit via variable.
         vform1.submit("Variable", "arg1", "arg2");
@@ -79,6 +87,10 @@ $(function () {
         // Submit via widget var by the id.
         vform2.submit("Variable", "arg1", "arg2");
     });
+    $("#vform2 #SUBMITEVENT").click(function () {
+        // Submit via widget var by the id.
+        $(this).trigger('callSubmit', ["Event", "arg1", "arg2"]);
+    });
     
     $("#vform3").change(function () {
         // Submit 'text-change' form.
@@ -94,6 +106,9 @@ $(function () {
 });
 
 function onForm2Submit(event) {
+    if (event.config.specficOnly && !event.isSpecific) {
+        return;
+    }
     log("Form2", event.args, event.values, event.config, event.context);
     event.context.count++;
 };
@@ -153,6 +168,7 @@ function onForm2Submit(event) {
         <input type="text" name="text" value="text"/>
         <span>
             <input type="button" id="SUBMIT" value="SUBMIT" />
+            <input type="button" id="SUBMITEVENT" value="SUBMIT-EVENT" />
         </span>
     </div>
     <div>

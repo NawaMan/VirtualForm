@@ -115,22 +115,7 @@ var virtualForm = (function($) {
 		}
 	}
 	
-	makeForm = function ($target, config_map, context_map) {
-		if (!$target) {
-			return;
-		}
-		$target = $($target);
-		config_map = config_map || {};
-		context_map = context_map || {};
-		
-		var config = duplicateObject(config_map);
-		var context = duplicateObject(context_map);
-		var uniqueId = '' + Math.floor(Math.random()*1000000);
-		var widgetVar;
-		
-		// TODO - Think about share context regardless of the source.
-		// TODO - Think about make 'specificOnly' a built-in config.
-		
+	function prepareAutoSubmit($target, namespace, callSubmit) {
 		var autoSubmits = $.makeArray($target.find("[data-submit-on]"));
 		if ($target.is("[data-submit-on]")) {
 			autoSubmits.push($target);
@@ -142,13 +127,43 @@ var virtualForm = (function($) {
 				submitOns = submitOns.split(/[ \t\r\n]*,[ \t\r\n]*/);
 				for (var s = 0; s < submitOns.length; s++) {
 					var submitOn = submitOns[s];
-					$autoSubmit.unbind(submitOn);
-					$autoSubmit.bind(submitOn, function callSubmit() {
-						widgetVar.submit();
-					});
+					$autoSubmit.unbind(namespace);
+					$autoSubmit.bind(submitOn + namespace, callSubmit);
 				}
 			}
 		}
+	}
+	
+	makeForm = function ($target, config_map, context_map) {
+		if (!$target) {
+			return;
+		}
+		$target = $($target);
+		config_map = config_map || {};
+		context_map = context_map || {};
+		
+		var config = duplicateObject(config_map);
+		var context = duplicateObject(context_map);
+		var uniqueId = '' + Math.floor(Math.random()*1000000);
+		var namespace = ".auto" + uniqueId;
+		var widgetVar;
+		
+		var callSubmit = function() {
+			widgetVar.submit();
+		};
+		
+		// TODO - Think about share context regardless of the source.
+		// TODO - Think about make 'specificOnly' a built-in config.
+		// TODO - move context to be the part of the option so that we can use the specific name 'context'
+		// TODO - Nested structure of `vform`.
+		// TODO - _(...) for get and set so that, args/config/values/fields/context is more error tolerant.
+		// TODO - data-validation
+		// TODO - error (onInvalidate)
+		// TODO - cancelSubmit
+		// TODO - onPostSubmit
+		// TODO - dirty fields
+		
+		prepareAutoSubmit($target, namespace, callSubmit);
 		
 		$target.bind('callSubmit', function (e) {
 			// Case of missing id, all instance will be triggered.
@@ -163,7 +178,7 @@ var virtualForm = (function($) {
 			var $This = $(this);
 			var result = extractParameters($This);
 			trigEvent($This, 'submit', {
-				args       : Array.prototype.slice.call( arguments, 1 ),	// Remote 'this'
+				args       : Array.prototype.slice.call( arguments, 1 ),	// To remote 'this'
 				config     : config,
 				values     : result.values,
 				fields     : result.fields,
@@ -178,6 +193,9 @@ var virtualForm = (function($) {
 				var event = $.Event('callSubmit');
 				event.___uniqueId___ = uniqueId;
 				$target.trigger(event, args);
+			},
+			'updateAutoSubmit' : function() {
+				prepareAutoSubmit($target, namespace, callSubmit);
 			}
 		};
 		

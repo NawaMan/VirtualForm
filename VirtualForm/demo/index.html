@@ -61,6 +61,7 @@ $(function () {
     virtualForm.makeForm($("#vform2"), { _declareWidgetVar_: true, extra1 : 'one' }, { count : 0 });
     virtualForm.makeForm($("#vform3"), { _declareWidgetVar_: true });
     virtualForm.makeForm($("#vform4"), { _declareWidgetVar_: true });
+    virtualForm.makeForm($("#vform5"), { _declareWidgetVar_: true }, { count : 0 });
     
     var form2b = virtualForm.makeForm($("#vform2"), { specficOnly: true }, { count : 0 });
     setTimeout(function() {
@@ -100,6 +101,13 @@ $(function () {
     $("#vform4").click(function () {
         // Submit 'button-click' form.
         vform4.submit("Variable", "arg1", "arg2");
+    });
+    
+    $("#vform5").bind('submit', function(event) {
+        log(event.args, event.values, event.context);
+        $("#vform5 .buttons").append($('<input type="button" id="SUBMIT" value="SUBMIT" data-submit-on="click" />'));
+        vform5.updateAutoSubmit();
+        event.context.count++;
     });
     
     log("Start ...");
@@ -176,6 +184,13 @@ function onForm2Submit(event) {
     </div>
     <div>
         <input type="button" id="vform4" value="SUBMIT" onSubmit="log(event.args, event.values);"/>
+    </div>
+    <div class="vform" id="vform5">
+        <span>VForm5</span>
+        <input type="text" name="text" value="text"/>
+        <span class="buttons">
+            <input type="button" id="SUBMIT" value="SUBMIT" data-submit-on="click" />
+        </span>
     </div>
 </div>
 

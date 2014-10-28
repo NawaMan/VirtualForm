@@ -61,7 +61,7 @@ $(function () {
     virtualForm.makeForm($("#vform2"), { extra1 : 'one' }, { count : 0 });
     virtualForm.makeForm($("#vform3"));
     virtualForm.makeForm($("#vform4"));
-    virtualForm.makeForm($("#vform5"), {}, { count : 0 });
+    virtualForm.makeForm($("#vform5"));
     virtualForm.makeForm($("#vform6"));
     
     var form2b = virtualForm.makeForm($("#vform2"), { }, { count : 0 });
@@ -105,10 +105,10 @@ $(function () {
     });
     
     $("#vform5").bind('submit', function(event) {
+        event.context._set('count', event.context._get('count', -1) + 1);
         log(event.args, event.values, event.context);
         $("#vform5 .buttons").append($('<input type="button" id="SUBMIT" value="SUBMIT" data-submit-on="click" />'));
         vform5.updateAutoSubmit();
-        event.context.count++;
     });
     
     log("Start ...");

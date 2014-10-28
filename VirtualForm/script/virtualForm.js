@@ -160,6 +160,47 @@ var virtualForm = (function($) {
 		}
 	}
 	
+	function makeProps(object) {
+		object._get = function(name, defaultValue, assign) {
+			if (!name) {
+				return defaultValue;
+			}
+			if (name in object) {
+				return object[name];
+			} else {
+				if (arguments.length <= 1) {
+					return null;
+				} else {
+					if ((arguments.length < 3) || !assign) {
+						object[name] = defaultValue;
+					}
+					return defaultValue;
+				}
+			}
+		};
+		object._set = function(name, value) {
+			if (arguments.length <= 1) {
+				return;
+			}
+			object[name] = value;
+		};
+		object._has = function(name) {
+			if (arguments.length <= 0) {
+				return;
+			}
+			return (name in object);
+		};
+		object._remove = function(name) {
+			if (arguments.length <= 0) {
+				return;
+			}
+			if (!(name in object)) {
+				return;
+			}
+			delete object[name];
+		};
+	}
+	
 	makeForm = function ($target, config_map, context_map) {
 		if (!$target) {
 			return;
@@ -183,9 +224,7 @@ var virtualForm = (function($) {
 		};
 		
 		// TODO - Think about share context regardless of the source.
-		// TODO - move context to be the part of the option so that we can use the specific name 'context'
 		// TODO - Nested structure of `vform`.
-		// TODO - _(...) for get and set so that, args/config/values/fields/context is more error tolerant.
 		// TODO - data-validation
 		// TODO - error (onInvalidate)
 		// TODO - cancelSubmit
@@ -193,6 +232,9 @@ var virtualForm = (function($) {
 		// TODO - dirty fields
 		
 		prepareAutoSubmit($target, namespace, callSubmit);
+		
+		makeProps(config);
+		makeProps(context);
 		
 		$target.bind('callSubmit', function (e) {
 			// Case of missing id, all instance will be triggered.
@@ -206,8 +248,15 @@ var virtualForm = (function($) {
 			
 			var $This = $(this);
 			var result = extractParameters($This);
+			var args = Array.prototype.slice.call( arguments, 1 );	// To remote 'this'
+			var values = result.values;
+			var fields = result.fields;
+			makeProps(args);
+			makeProps(values);
+			makeProps(fields);
+			
 			trigEvent($This, 'submit', {
-				args       : Array.prototype.slice.call( arguments, 1 ),	// To remote 'this'
+				args       : args,
 				config     : config,
 				values     : result.values,
 				fields     : result.fields,

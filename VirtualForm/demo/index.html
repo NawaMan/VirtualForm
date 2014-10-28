@@ -57,13 +57,13 @@ function log() {
 $(function () {
     virtualForm.initModule();
     
-    var vform1 = virtualForm.makeForm($("#vform1"));
-    virtualForm.makeForm($("#vform2"), { _declareWidgetVar_: true, extra1 : 'one' }, { count : 0 });
-    virtualForm.makeForm($("#vform3"), { _declareWidgetVar_: true });
-    virtualForm.makeForm($("#vform4"), { _declareWidgetVar_: true });
-    virtualForm.makeForm($("#vform5"), { _declareWidgetVar_: true }, { count : 0 });
+    var vform1 = virtualForm.makeForm($("#vform1"), { _declareWidgetVar_: false });
+    virtualForm.makeForm($("#vform2"), { extra1 : 'one' }, { count : 0 });
+    virtualForm.makeForm($("#vform3"));
+    virtualForm.makeForm($("#vform4"));
+    virtualForm.makeForm($("#vform5"), {}, { count : 0 });
     
-    var form2b = virtualForm.makeForm($("#vform2"), { specficOnly: true }, { count : 0 });
+    var form2b = virtualForm.makeForm($("#vform2"), { }, { count : 0 });
     setTimeout(function() {
         form2b.submit();
         setTimeout(function() {
@@ -114,7 +114,7 @@ $(function () {
 });
 
 function onForm2Submit(event) {
-    if (event.config.specficOnly && !event.isSpecific) {
+    if (event.config._specficOnly_ && !event.isSpecific) {
         return;
     }
     log("Form2", event.args, event.values, event.config, event.context);

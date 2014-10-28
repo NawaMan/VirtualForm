@@ -122,16 +122,24 @@ var virtualForm = (function($) {
 		}
 		for (var i = 0; i < autoSubmits.length; i++) {
 			var $autoSubmit = $(autoSubmits[i]);
+			$autoSubmit.unbind(namespace);
 			var submitOns = $autoSubmit.attr("data-submit-on");
 			if (submitOns) {
 				submitOns = submitOns.split(/[ \t\r\n]*,[ \t\r\n]*/);
 				for (var s = 0; s < submitOns.length; s++) {
 					var submitOn = submitOns[s];
-					$autoSubmit.unbind(namespace);
 					$autoSubmit.bind(submitOn + namespace, callSubmit);
 				}
 			}
 		}
+	}
+	
+	function prepareDefaultContig(config_map, defaults) {
+		$.each(defaults, function(prop, value) {
+			if (!(prop in config_map)) {
+				config_map[prop] = value;
+			}
+		});
 	}
 	
 	makeForm = function ($target, config_map, context_map) {
@@ -141,6 +149,9 @@ var virtualForm = (function($) {
 		$target = $($target);
 		config_map = config_map || {};
 		context_map = context_map || {};
+		prepareDefaultContig(config_map, {
+			_specficOnly_ : true,
+		});
 		
 		var config = duplicateObject(config_map);
 		var context = duplicateObject(context_map);
@@ -153,7 +164,7 @@ var virtualForm = (function($) {
 		};
 		
 		// TODO - Think about share context regardless of the source.
-		// TODO - Think about make 'specificOnly' a built-in config.
+		// TODO - Config are specified as attributes.
 		// TODO - move context to be the part of the option so that we can use the specific name 'context'
 		// TODO - Nested structure of `vform`.
 		// TODO - _(...) for get and set so that, args/config/values/fields/context is more error tolerant.
@@ -200,7 +211,8 @@ var virtualForm = (function($) {
 		};
 		
 		if (($target.attr("data-var") != undefined)
-		 || (("_declareWidgetVar_" in config_map) && (config_map._declareWidgetVar_))) {
+		 || !("_declareWidgetVar_" in config_map)
+		 || (config_map._declareWidgetVar_)) {
 			declareWidgetVariable($target, widgetVar);
 		}
 		

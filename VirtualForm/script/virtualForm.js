@@ -142,6 +142,24 @@ var virtualForm = (function($) {
 		});
 	}
 	
+	function prepareConfigFromAttribute($target, config_map) {
+		var configPrefix = 'config';
+		var data = $target.data();
+		for (var d in data) {
+			if (configPrefix != d.substring(0, configPrefix.length)) {
+				continue;
+			}
+			
+			var configName = d.substring(configPrefix.length);
+			var firstChar = configName.substring(0,1);
+			if (firstChar != firstChar.toUpperCase()) {
+				continue;
+			}
+			configName = firstChar.toLowerCase() + configName.substring(1);
+			config_map[configName] = data[d];
+		}
+	}
+	
 	makeForm = function ($target, config_map, context_map) {
 		if (!$target) {
 			return;
@@ -150,8 +168,9 @@ var virtualForm = (function($) {
 		config_map = config_map || {};
 		context_map = context_map || {};
 		prepareDefaultContig(config_map, {
-			_specficOnly_ : true,
+			specficOnly : true,
 		});
+		prepareConfigFromAttribute($target, config_map);
 		
 		var config = duplicateObject(config_map);
 		var context = duplicateObject(context_map);
@@ -164,7 +183,6 @@ var virtualForm = (function($) {
 		};
 		
 		// TODO - Think about share context regardless of the source.
-		// TODO - Config are specified as attributes.
 		// TODO - move context to be the part of the option so that we can use the specific name 'context'
 		// TODO - Nested structure of `vform`.
 		// TODO - _(...) for get and set so that, args/config/values/fields/context is more error tolerant.
@@ -211,8 +229,8 @@ var virtualForm = (function($) {
 		};
 		
 		if (($target.attr("data-var") != undefined)
-		 || !("_declareWidgetVar_" in config_map)
-		 || (config_map._declareWidgetVar_)) {
+		 || !("declareWidgetVar" in config_map)
+		 || (config_map.declareWidgetVar)) {
 			declareWidgetVariable($target, widgetVar);
 		}
 		

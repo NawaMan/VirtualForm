@@ -57,11 +57,12 @@ function log() {
 $(function () {
     virtualForm.initModule();
     
-    var vform1 = virtualForm.makeForm($("#vform1"), { _declareWidgetVar_: false });
+    var vform1 = virtualForm.makeForm($("#vform1"), { declareWidgetVar: false });
     virtualForm.makeForm($("#vform2"), { extra1 : 'one' }, { count : 0 });
     virtualForm.makeForm($("#vform3"));
     virtualForm.makeForm($("#vform4"));
     virtualForm.makeForm($("#vform5"), {}, { count : 0 });
+    virtualForm.makeForm($("#vform6"));
     
     var form2b = virtualForm.makeForm($("#vform2"), { }, { count : 0 });
     setTimeout(function() {
@@ -114,7 +115,7 @@ $(function () {
 });
 
 function onForm2Submit(event) {
-    if (event.config._specficOnly_ && !event.isSpecific) {
+    if (event.config.specficOnly && !event.isSpecific) {
         return;
     }
     log("Form2", event.args, event.values, event.config, event.context);
@@ -187,6 +188,13 @@ function onForm2Submit(event) {
     </div>
     <div class="vform" id="vform5">
         <span>VForm5</span>
+        <input type="text" name="text" value="text"/>
+        <span class="buttons">
+            <input type="button" id="SUBMIT" value="SUBMIT" data-submit-on="click" />
+        </span>
+    </div>
+    <div class="vform" id="vform6" data-config-some-setting="some value" onSubmit="log(event);" >
+        <span>VForm6 - Config Attribute</span>
         <input type="text" name="text" value="text"/>
         <span class="buttons">
             <input type="button" id="SUBMIT" value="SUBMIT" data-submit-on="click" />
